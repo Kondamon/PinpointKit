@@ -248,17 +248,13 @@ open class EditImageViewController: UIViewController, UIGestureRecognizerDelegat
     open override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        let screenshot = self.view.imageSnapshotCroppedToFrame(self.imageView.frame)
-        delegate?.editorDidDisappear(self, with: screenshot)
     }
     
-    open override func viewDidLayoutSubviews() {
-        if let height = navigationController?.navigationBar.frame.height {
-            var rect = annotationsView.frame
-            rect.origin.y += height
-            rect.size.height -= height
-            annotationsView.accessibilityFrame = rect
-        }
+    open override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        let screenshot = self.view.snapshot(of: self.imageView.frame)
+       
+        delegate?.editorWillDisappear(self, with: screenshot)
     }
     
     open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -299,7 +295,7 @@ open class EditImageViewController: UIViewController, UIGestureRecognizerDelegat
             return
         }
         
-        let screenshot = self.view.imageSnapshotCroppedToFrame(self.imageView.frame)
+        let screenshot = self.view.snapshot(of: self.imageView.frame)
         if delegate.editorShouldDismiss(self, with: screenshot) {
             delegate.editorWillDismiss(self, with: screenshot)
             
