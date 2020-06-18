@@ -29,11 +29,17 @@ public struct FeedbackConfiguration {
         }
     }
     
-    /// The value of the default parameter for `title` in the initializer.
-    public static let DefaultTitle = "Bug Report"
-    
     /// A file name without an extension for the screenshot or annotated screenshot.
     public var screenshotFileName: String
+    
+    /// A rating from the feedback submission. Choose any rating
+    public var rating: String?
+    
+    /// The sender of the feedback. When the user wants tobe contacted about the submitted feedback
+    public var fromSender: String?
+    
+    /// An anonymous userID to better understand feedback and for debugging purposes
+    public var userID: String?
     
     /// The recipients of the feedback submission. Suitable for email recipients in the "To:" field.
     public var recipients: [String]?
@@ -66,8 +72,11 @@ public struct FeedbackConfiguration {
      */
     public init(screenshotFileName: String = "Screenshot",
                 recipients: [String],
-                title: String? = FeedbackConfiguration.DefaultTitle,
+                title: String? = nil,
                 body: Body? = nil,
+                rating: String? = nil,
+                fromSender: String? = nil,
+                userID: String? = nil,
                 logsFileName: String = "logs",
                 additionalInformation: [String: AnyObject]? = nil,
                 presentationStyle: UIModalPresentationStyle = .fullScreen) {
@@ -75,6 +84,9 @@ public struct FeedbackConfiguration {
         self.recipients = recipients
         self.title = title
         self.body = body
+        self.rating = rating
+        self.fromSender = fromSender
+        self.userID = userID
         self.logsFileName = logsFileName
         self.additionalInformation = additionalInformation
         self.presentationStyle = presentationStyle
