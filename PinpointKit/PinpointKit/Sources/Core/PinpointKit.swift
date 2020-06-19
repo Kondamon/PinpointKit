@@ -61,6 +61,11 @@ open class PinpointKit {
         configuration.feedbackCollector.collectFeedback(with: screenshot, from: viewController)
     }
     
+    /// Dismiss Pinpointkit from presenting viewController
+    open func dismiss(animated: Bool = true, completion: (() -> Void)? = nil) {
+        displayingViewController?.dismiss(animated: animated, completion: completion)
+    }
+    
     /// Presents an alert signifying the inability to compose a Mail message.
     open func presentFailureToComposeMailAlert() {
         let alertTitle = NSLocalizedString("Can’t Send Email", comment: "Title for an alert shown when attempting to send mail without a mail account setup.")
@@ -90,20 +95,12 @@ extension PinpointKit: SenderDelegate {
     
     public func sender(_ sender: Sender, didSend feedback: Feedback?, success: SuccessType?) {
         guard let feedback = feedback else { return }
-        
         delegate?.pinpointKit(self, didSend: feedback)
-        displayingViewController?.dismiss(animated: true, completion: nil)
     }
     
     public func sender(_ sender: Sender, didFailToSend feedback: Feedback?, error: Error) {
-        if case MailSender.Error.mailCanceled = error { return }
-        
         guard let feedback = feedback else { return }
-        if let delegate = delegate {
-            delegate.pinpointKit(self, didFailToSend: feedback, error: error)
-        } else if case MailSender.Error.mailCannotSend = error {
-            presentFailureToComposeMailAlert()
-        }
+        delegate?.pinpointKit(self, didFailToSend: feedback, error: error)
     }
 }
 
