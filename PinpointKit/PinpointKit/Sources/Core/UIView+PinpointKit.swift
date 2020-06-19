@@ -17,10 +17,21 @@ extension UIView {
     ///
     /// - Returns: The `UIImage` snapshot.
     func snapshot(of rect: CGRect? = nil) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(bounds: rect ?? bounds)
-        let image = renderer.image { rendererContext in
-            layer.render(in: rendererContext.cgContext)
+        UIGraphicsBeginImageContextWithOptions(rect?.size ?? bounds.size, true, 0)
+        
+        var usedBounds = bounds
+        if let rect = rect {
+            // translate offset from origin for a certain rect
+            usedBounds = CGRect(x: -rect.origin.x, y: -rect.origin.y, width: bounds.width, height: bounds.height)
         }
+        
+        drawHierarchy(in: usedBounds, afterScreenUpdates: true)
+        guard let image = UIGraphicsGetImageFromCurrentImageContext() else {
+            preconditionFailure("`UIGraphicsGetImageFromCurrentImageContext()` should never return `nil` as we satisify the requirements of having a bitmap-based current context created with `UIGraphicsBeginImageContextWithOptions(_:_:_:)`")
+        }
+        
+        UIGraphicsEndImageContext()
+        
         return image
     }
 }
